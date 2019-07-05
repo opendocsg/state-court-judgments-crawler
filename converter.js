@@ -100,7 +100,7 @@ const htmlToMarkdown = (html, url) => {
     markdown = markdown.replace(/\uFFFD/g, '')
 
     // Add footnote formatting
-    markdown = `<style>.footnotes::before { content: "Footnotes:"; }</style>` + markdown
+    markdown = `<style>.footnotes::before { content: "Footnotes:"; }</style>\n` + markdown
 
     // Add source url at the bottom
     markdown += `\n\n\nSource: [link](${url})`
