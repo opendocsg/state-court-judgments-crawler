@@ -14,6 +14,8 @@ const rssurl = process.env.RSS_URL || console.error('RSS_URL not provided')
 const fileName = 'report.md'
 const configFileName = 'index.md'
 
+const overwrite = Boolean(process.env.OVERWRITE)
+
 const run = async () => {
     await gitManager.gitClone()
     const feed = await parser.parseURL(rssurl)
@@ -26,11 +28,11 @@ const run = async () => {
         const blacklistChars = /[^A-Za-z0-9-()_+&@,\s]/g
         const itemTitle = item.title.split('-')
         let directoryName = itemTitle.pop().trim().replace(/ /g, '_')
-        directoryName = directoryName.replace(blacklistChars, '') 
+        directoryName = directoryName.replace(blacklistChars, '')
         const directoryPath = path.join(directory, directoryName)
         const filePath = path.join(directoryPath, fileName)
         const configFilePath = path.join(directoryPath, configFileName)
-        if (fs.existsSync(filePath)) {
+        if (fs.existsSync(filePath) && !overwrite) {
             return
         }
         newFiles.push({

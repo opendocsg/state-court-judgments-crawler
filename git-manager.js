@@ -10,6 +10,8 @@ const rootTempDirectory = '.'
 const directory = path.join(rootTempDirectory, path.basename(gitUrl, '.git'))
 const branch = process.env.GIT_BRANCH || 'master'
 
+const skipUpdateConfig = Boolean(process.env.SKIP_UPDATE_CONFIG)
+
 let authUrl = URL.parse(gitUrl)
 authUrl.auth = gitToken + ':x-oauth-basic'
 authUrl = URL.format(authUrl)
@@ -66,7 +68,9 @@ const updateOrderInConfig = async (newDirectories) => {
 
 const updateGitRepoWithNewFiles = async (newFiles) => {
     try {
-        await updateOrderInConfig(newFiles)
+        if (!skipUpdateConfig) {
+            await updateOrderInConfig(newFiles)
+        }
         await gitCommitAndPush()
     } catch (err) {
         throw err

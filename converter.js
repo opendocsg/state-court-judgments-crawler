@@ -59,9 +59,16 @@ const htmlToMarkdown = (html, url) => {
     }
     $ = cheerio.load(content)
 
-    // Remove javascript hyperlink
-    const caseId = $('.Citation').first().text().trim()
-    $('[href^=javascript]').remove()
+    // Move first citation (the case id) to after case title
+    const caseIdSpan = $('.Citation').first()
+    const caseId = caseIdSpan.text().trim()
+    const caseIdTitle = caseIdSpan.clone().wrap($('<h3></h3>')).parent()
+
+    caseIdSpan.remove()
+    $('.title').first().after(caseIdTitle)
+
+    // Deactivate javascript hyperlink
+    $('[href^=javascript]').each(function () { $(this).replaceWith($(this).text()) })
 
     // Remove colons from table
     $('.info-delim1').remove()
