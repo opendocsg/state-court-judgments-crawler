@@ -89,7 +89,8 @@ const htmlToMarkdown = (html, url) => {
     const date = $('.Judg-Hearing-Date').text().trim()
     let dateTable = $('.Judg-Hearing-Date').closest('table')
     if (dateTable.length > 0) {
-        $('.Judg-Hearing-Date').closest('table').replaceWith(date)
+        const reserved = $('.Judg-Date-Reserved').text().trim()
+        $('.Judg-Hearing-Date').closest('table').replaceWith(reserved ? `${date} - ${reserved}` : date)
     }
 
     // Get tags
