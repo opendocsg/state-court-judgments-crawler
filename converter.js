@@ -19,8 +19,14 @@ const footnoteRule = {
     replacement: (content) => content.replace(/\\/g, '').replace('[note: ', '[^') + ': ',
 }
 
+const citationRule = {
+    filter: (node) => (node.getAttribute('href') + '').startsWith('javascript'),
+    replacement: (content) => `<span class="citation">${content}</span>`,
+}
+
 turndownService.addRule('FootnoteRef', footnoteRefRule)
 turndownService.addRule('Footnote', footnoteRule)
+turndownService.addRule('Citation', citationRule)
 
 const getRequest = async (url) => {
     try {
@@ -62,13 +68,12 @@ const htmlToMarkdown = (html, url) => {
     // Move first citation (the case id) to after case title
     const caseIdSpan = $('.Citation').first()
     const caseId = caseIdSpan.text().trim()
-    const caseIdTitle = caseIdSpan.clone().wrap($('<h3></h3>')).parent()
+
+    const caseIdTitle = $('<h3></h3>').text(caseId)
 
     caseIdSpan.remove()
-    $('.title').first().after(caseIdTitle)
 
-    // Deactivate javascript hyperlink
-    $('[href^=javascript]').each(function () { $(this).replaceWith($(this).text()) })
+    $('.title').first().after(caseIdTitle)
 
     // Remove colons from table
     $('.info-delim1').remove()
