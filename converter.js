@@ -24,9 +24,25 @@ const citationRule = {
     replacement: (content) => `<span class="citation">${content}</span>`,
 }
 
+const indentationRule = {
+    filter: (node) => {
+        const pClass = node.getAttribute('class')
+        return pClass && pClass.startsWith('Judg-') && !pClass.includes('Heading') && pClass.match(/\d+$/)
+    },
+    replacement: (content, node, options) => {
+        const pClass = node.getAttribute('class')
+        let indentationLevel = Number(pClass.match(/\d+$/)[0]) - 1
+        if (pClass.includes('-Quot')) {
+            ++indentationLevel
+        }
+        return '\n\n' + '>'.repeat(indentationLevel) + (indentationLevel ? ' ' : '') + content + '\n\n'
+    },
+}
+
 turndownService.addRule('FootnoteRef', footnoteRefRule)
 turndownService.addRule('Footnote', footnoteRule)
 turndownService.addRule('Citation', citationRule)
+turndownService.addRule('Indentation', indentationRule)
 
 const getRequest = async (url) => {
     try {
